@@ -67,20 +67,53 @@ class OchoClient {
           if (xhr.status >= 200 && xhr.status < 300) {
             try {
               const data = JSON.parse(xhr.response);
-              resolve(data);
+              const status = xhr.status;
+              const statusText = xhr.statusText;
+              resolve({
+                data,
+                status,
+                statusText,
+              });
             } catch (error) {
+              const data = xhr.response;
+              const status = xhr.status;
+              const statusText = xhr.statusText;
               if (mergedOptions.throwHttpErrors) {
+                console.log({
+                  data,
+                  status,
+                  statusText,
+                });
                 reject(new Error("Erreur de parsing JSON"));
               } else {
                 console.error(error);
-                resolve(xhr.response); // Retourne la réponse brute
+                resolve({
+                  data,
+                  status,
+                  statusText,
+                }); // Retourne la réponse brute
               }
             }
-          } else if (mergedOptions.throwHttpErrors) {
-            reject(new Error(`Erreur HTTP ${xhr.status}: ${xhr.statusText}`));
-          } else {
-            resolve(xhr.response);
-          }
+          } else{
+            const data = xhr.response;
+              const status = xhr.status;
+              const statusText = xhr.statusText;
+              if (mergedOptions.throwHttpErrors) {
+                console.log({
+                  data,
+                  status,
+                  statusText,
+                });
+                reject(new Error(`Erreur HTTP ${xhr.status}: ${xhr.statusText}`));
+              } else {
+                console.error(error);
+                resolve({
+                  data,
+                  status,
+                  statusText,
+                }); // Retourne la réponse brute
+              }
+          } 
         }
       };
 
@@ -97,7 +130,14 @@ class OchoClient {
         if (mergedOptions.body instanceof FormData) {
           xhr.send(mergedOptions.body);
         } else if (typeof mergedOptions.body === "object") {
-          xhr.send(JSON.stringify(mergedOptions.body));
+          const formData = new FormData();
+          Object.entries(mergedOptions.body).forEach(([key, value]) => {
+            formData.append(key, value);
+          });
+          xhr.send(formData);
+        } else if (typeof mergedOptions.body === "string") {
+          xhr.setRequestHeader("Content-Type", "application/json");
+          xhr.send(mergedOptions.body);
         } else {
           xhr.send(mergedOptions.body);
         }
@@ -168,13 +208,15 @@ function submitForm(event) {
           console.log(progress);
           message.textContent = `Progression : ${Math.floor(progress)}%`;
           if (progress === 100) {
-            message.textContent = "Traitement..."
+            setTimeout(() => {
+              message.textContent = "Traitement..."
+            }, 100);
           }
         }
       }
     )
-    .then((response) => {
-      console.log("Réponse du serveur:", response);
+    .then(({data, status, statusText}) => {
+      console.log("Réponse du serveur:", data);
       message.classList.remove("progress");
       message.classList.add("success");
       message.textContent = "Données envoyées avec succès!";
@@ -198,10 +240,10 @@ const dataDisplay = document.querySelector(".data-display");
 function fetchData() {
   apiClient
     .get("/api/data",)
-    .then((response) => {
-      console.log("Données récupérées:", response);
+    .then(({data, status, statusText}) => {
+      console.log("Données récupérées:", data);
       if (dataDisplay) {
-        displayData(response);
+        displayData(data);
       }
     })
     .catch((error) => {
