@@ -78,23 +78,29 @@ Vous pouvez suivre la progression des requêtes (en particulier pour les uploads
 #### Requête GET
 
 ```javascript
-apiClient.get("users").then(({ data }) => {
-  console.log("Réponse :", data);
-}).catch((error) => {
-  console.error("Erreur :", error.message);
-});
+apiClient
+  .get("users")
+  .then(({ data }) => {
+    console.log("Réponse :", data);
+  })
+  .catch((error) => {
+    console.error("Erreur :", error.message);
+  });
 ```
 
 #### Requête POST avec corps
 
 ```javascript
-apiClient.post("users", {
-  body: { name: "Jane Doe", email: "jane@example.com" },
-}).then((data) => {
-  console.log("Utilisateur créé :", { data });
-}).catch((error) => {
-  console.error("Erreur lors de la création :", error.message);
-});
+apiClient
+  .post("users", {
+    body: { name: "Jane Doe", email: "jane@example.com" },
+  })
+  .then(({ data }) => {
+    console.log("Utilisateur créé :", data);
+  })
+  .catch((error) => {
+    console.error("Erreur lors de la création :", error.message);
+  });
 ```
 
 #### Requête POST avec suivi de la progression
@@ -111,13 +117,20 @@ const onProgress = (progress, event) => {
 const fileData = new FormData();
 fileData.append("file", myFile);
 
-apiClient.post("upload", {
-  body: fileData,
-}, onProgress).then(({ data }) => {
-  console.log("Fichier uploadé :", data);
-}).catch((error) => {
-  console.error("Erreur d'upload :", error.message);
-});
+apiClient
+  .post(
+    "upload",
+    {
+      body: fileData,
+    },
+    onProgress
+  )
+  .then(({ data }) => {
+    console.log("Fichier uploadé :", data);
+  })
+  .catch((error) => {
+    console.error("Erreur d'upload :", error.message);
+  });
 ```
 
 #### Gestion des erreurs
@@ -131,23 +144,29 @@ apiClient.get("invalid-endpoint").catch((error) => {
 #### Requête avec timeout
 
 ```javascript
-apiClient.get("users", { timeout: 2000 }).then(({ data }) => {
-  console.log("Réponse :", data);
-}).catch((error) => {
-  console.error("Erreur ou timeout :", error.message);
-});
+apiClient
+  .get("users", { timeout: 2000 })
+  .then(({ data }) => {
+    console.log("Réponse :", data);
+  })
+  .catch((error) => {
+    console.error("Erreur ou timeout :", error.message);
+  });
 ```
 
 #### Requête avec en-têtes spécifiques
 
 ```javascript
-apiClient.get("users/1", {
-  headers: {
-    "X-Custom-Header": "CustomValue",
-  },
-}).then(({ data }) => {
-  console.log("Utilisateur :", data);
-}).catch(console.error);
+apiClient
+  .get("users/1", {
+    headers: {
+      "X-Custom-Header": "CustomValue",
+    },
+  })
+  .then(({ data }) => {
+    console.log("Utilisateur :", data);
+  })
+  .catch(console.error);
 ```
 
 #### Utilisation dans une fonction asynchrone
@@ -158,7 +177,10 @@ async function fetchUsers() {
     const { data: users } = await apiClient.get("users");
     console.log("Liste des utilisateurs :", users);
   } catch (error) {
-    console.error("Erreur lors de la récupération des utilisateurs :", error.message);
+    console.error(
+      "Erreur lors de la récupération des utilisateurs :",
+      error.message
+    );
   }
 }
 ```
@@ -188,20 +210,20 @@ function submitForm(event) {
         body: formData,
       },
       function onProgress(progress) {
-        message.classList.remove("success")
-        message.classList.remove("error")
+        message.classList.remove("success");
+        message.classList.remove("error");
         if (progress !== null) {
           console.log(progress);
           message.textContent = `Progression : ${Math.floor(progress)}%`;
           if (progress === 100) {
             setTimeout(() => {
-              message.textContent = "Traitement..."
+              message.textContent = "Traitement...";
             }, 100);
           }
         }
       }
     )
-    .then(({data, status, statusText}) => {
+    .then(({ data, status, statusText }) => {
       console.log("Réponse du serveur:", data);
       message.classList.remove("progress");
       message.classList.add("success");
@@ -229,8 +251,8 @@ const dataDisplay = document.querySelector(".data-display");
 
 function fetchData() {
   apiClient
-    .get("/data",)
-    .then(({data, status, statusText}) => {
+    .get("/data")
+    .then(({ data, status, statusText }) => {
       console.log("Données récupérées:", data);
       if (dataDisplay) {
         displayData(data);
@@ -246,7 +268,7 @@ function displayData(data) {
   if (data && Array.isArray(data) && data.length > 0) {
     dataDisplay.innerHTML = `
       <ul>
-        ${data.map(item => `<li>${item.name} - ${item.email}</li>`).join('')}
+        ${data.map((item) => `<li>${item.name} - ${item.email}</li>`).join("")}
       </ul>
     `;
   } else {
@@ -260,4 +282,3 @@ dataDisplay && fetchData();
 ## Conclusion
 
 La classe `OchoClient` est un outil puissant et flexible pour interagir avec des API REST. Elle offre une interface simple pour envoyer des requêtes HTTP, gérer les erreurs, et suivre la progression des requêtes. Que vous travailliez sur une application web ou un projet backend, `OchoClient` peut simplifier vos interactions HTTP.
-```
