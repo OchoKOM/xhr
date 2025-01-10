@@ -10,16 +10,63 @@ Aucune installation particulière n'est nécessaire. La classe `OchoClient` peut
 
 ### Initialisation
 
-Pour utiliser `OchoClient`, vous devez d'abord créer une instance de la classe en fournissant l'URL de base de l'API et éventuellement des options par défaut.
+Pour utiliser `OchoClient`, vous devez d'abord créer une instance de la classe en fournissant l'URL de base de l'API et éventuellement des options par défaut. Voici plusieurs exemples d'initialisation avec différentes configurations :
+
+#### Exemple 1 : Initialisation simple avec une URL de base
 
 ```javascript
-const apiClient = new OchoClient("/api", {
+const apiClient = new OchoClient("https://api.example.com");
+```
+
+Dans cet exemple, seule l'URL de base est fournie. Aucune option par défaut n'est spécifiée, donc les requêtes utiliseront les valeurs par défaut (pas de timeout, pas d'en-têtes personnalisés, etc.).
+
+#### Exemple 2 : Initialisation avec des en-têtes par défaut
+
+```javascript
+const apiClient = new OchoClient("https://api.example.com", {
   headers: {
     Authorization: "Bearer your-token",
     "X-Custom-Header": "custom-value",
   },
 });
 ```
+
+Ici, des en-têtes par défaut sont définis pour toutes les requêtes. Ces en-têtes seront automatiquement ajoutés à chaque requête, sauf si vous les remplacez dans les options spécifiques à une requête.
+
+#### Exemple 3 : Initialisation avec un timeout par défaut
+
+```javascript
+const apiClient = new OchoClient("https://api.example.com", {
+  timeout: 5000, // 5 secondes
+});
+```
+
+Dans cet exemple, un timeout de 5 secondes est défini par défaut pour toutes les requêtes. Si une requête dépasse ce délai, elle sera automatiquement annulée.
+
+#### Exemple 4 : Initialisation avec des options de gestion des erreurs
+
+```javascript
+const apiClient = new OchoClient("https://api.example.com", {
+  throwHttpErrors: false, // Désactive le rejet automatique des erreurs HTTP
+});
+```
+
+Avec cette configuration, les erreurs HTTP (status >= 400) ne seront pas automatiquement rejetées. Vous devrez gérer manuellement les erreurs dans votre code.
+
+
+#### Exemple 5 : Initialisation avec plusieurs options combinées
+
+```javascript
+const apiClient = new OchoClient("https://api.example.com", {
+  headers: {
+    Authorization: "Bearer your-token",
+    "Content-Type": "application/json",
+  },
+  timeout: 10000, // 10 secondes
+});
+```
+
+Cet exemple combine plusieurs options : des en-têtes par défaut et un timeout de 10 secondes.
 
 ### Méthodes disponibles
 
